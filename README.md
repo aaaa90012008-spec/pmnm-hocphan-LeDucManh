@@ -56,3 +56,13 @@ Kích hoạt môi trường ảo rồi chạy:
 
 python hello.py
 
+
+
+
+## Giấy phép
+
+Mã nguồn do tôi tự viết trong kho này được phát hành theo [Giấy phép MIT](LICENSE).
+
+SPDX-License-Identifier: MIT
+
+
