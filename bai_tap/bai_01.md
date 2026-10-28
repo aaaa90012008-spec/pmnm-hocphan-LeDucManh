@@ -113,3 +113,57 @@ Trường hợp LibreOffice cho thấy giấy phép mã nguồn mở bảo vệ 
 
 &#x20;  https://openoffice.apache.org/
 
+
+
+
+## Bài 1.3 — Bi kịch tài nguyên chung trong phần mềm mã nguồn mở: Trường hợp XZ Utils
+
+### 1. Khái niệm và bối cảnh
+
+“Bi kịch tài nguyên chung” (tragedy of the commons) mô tả tình huống một nguồn tài nguyên được nhiều người cùng sử dụng nhưng không có cơ chế quản lý phù hợp, khiến lợi ích trước mắt của từng cá nhân có thể làm suy giảm lợi ích chung. Trong phần mềm mã nguồn mở, vấn đề này có biểu hiện đặc biệt: rất nhiều cá nhân và doanh nghiệp được hưởng lợi từ một thư viện miễn phí, nhưng công việc bảo trì, sửa lỗi, kiểm thử và xử lý sự cố lại có thể tập trung vào một số ít tình nguyện viên.
+
+Trường hợp XZ Utils cho thấy rủi ro khi một thành phần hạ tầng quan trọng phụ thuộc quá nhiều vào lòng tin và nguồn lực của một nhóm nhỏ. XZ Utils cung cấp các công cụ nén và giải nén dữ liệu, trong đó thư viện liblzma được sử dụng bởi nhiều phần mềm và hệ thống Linux. Sự cố năm 2024 không đơn thuần là một lỗi lập trình mà còn cho thấy cách hạn chế về nguồn lực và quy trình quản trị có thể làm tăng rủi ro cho toàn bộ hệ sinh thái.
+
+### 2. Diễn biến sự cố
+
+Theo dòng thời gian do Russ Cox tổng hợp, một người sử dụng danh tính Jia Tan bắt đầu đóng góp cho dự án từ năm 2021. Sau quá trình đóng góp kéo dài, tài khoản này dần được trao quyền tham gia quản lý và phát hành phần mềm. Trong thời gian đó, người bảo trì chính Lasse Collin từng đề cập rằng nguồn lực của mình có hạn và XZ Utils là một dự án sở thích không được trả công. Một số tài khoản khác cũng gây áp lực về tốc độ xử lý các đóng góp và nhu cầu bổ sung người duy trì.
+
+Vào tháng 2 và tháng 3 năm 2024, các bản phát hành XZ Utils 5.6.0 và 5.6.1 chứa mã độc được che giấu trong quá trình xây dựng phần mềm. Mã này có thể can thiệp vào quá trình xác thực SSH trong một số điều kiện nhất định, tạo nguy cơ thực thi lệnh từ xa trước khi xác thực thành công. Ngày 29 tháng 3 năm 2024, Andres Freund công bố phát hiện cửa hậu sau khi nhận thấy những dấu hiệu bất thường về hiệu năng khi đăng nhập SSH. Sự cố được định danh CVE-2024-3094 với mức điểm CVSS 10/10 trong cảnh báo của CERT-EU.
+
+Các bản bị ảnh hưởng chủ yếu đã xuất hiện trong những nhánh thử nghiệm hoặc chưa ổn định của một số bản phân phối Linux. Do được phát hiện kịp thời, nguy cơ đã được hạn chế trước khi các phiên bản độc hại lan rộng trên diện lớn. Sự kiện này cho thấy một thành phần mã nguồn mở ít được chú ý có thể trở thành mắt xích rủi ro cho các hệ thống quan trọng.
+
+### 3. Mối liên hệ với bi kịch tài nguyên chung
+
+Thứ nhất, lợi ích và chi phí bảo trì không được phân bổ tương xứng. Một thư viện như XZ Utils có thể được sử dụng gián tiếp bởi nhiều dự án, nhà cung cấp và tổ chức. Tuy nhiên, việc duy trì chất lượng mã nguồn, đọc báo cáo lỗi và kiểm tra bản phát hành đòi hỏi thời gian cùng chuyên môn. Nếu phần lớn người sử dụng chỉ nhận lợi ích mà không đóng góp tiền bạc, mã nguồn, kiểm thử hoặc phản hồi, người bảo trì có thể phải gánh một khối lượng công việc vượt quá khả năng của mình.
+
+Thứ hai, sự phụ thuộc vào một số ít người tạo ra điểm yếu về tổ chức. Khi một người duy trì chính phải xử lý quá nhiều công việc, việc bổ sung người hỗ trợ có thể cần thiết. Tuy nhiên, nếu việc trao quyền không đi kèm quy trình kiểm tra độc lập, quyền quản lý có thể trở thành điểm rủi ro. Trong vụ XZ Utils, danh tính đóng góp đáng tin cậy trong thời gian dài và áp lực từ các tài khoản khác đã góp phần tạo điều kiện cho kẻ tấn công xây dựng lòng tin. Vì vậy, sự cố không thể chỉ được giải thích bằng thiếu kinh phí; nó còn phản ánh hạn chế trong việc kiểm chứng danh tính, phân quyền và đánh giá thay đổi.
+
+Thứ ba, chi phí của một lỗi bảo mật có thể vượt xa phạm vi dự án. Một thư viện được chia sẻ khiến nhiều hệ thống cùng phụ thuộc vào kết quả bảo trì của nó. Khi một bản phát hành bị xâm phạm, người dùng, nhà phân phối Linux và đội ngũ an ninh của nhiều tổ chức phải cùng thực hiện điều tra, cập nhật và khôi phục. Đây là biểu hiện của tính phụ thuộc lẫn nhau trong hệ sinh thái mã nguồn mở: lợi ích được chia sẻ rộng rãi nhưng rủi ro cũng lan truyền rộng rãi.
+
+Dù vậy, XZ Utils không phải ví dụ hoàn toàn giống mô hình kinh tế cổ điển của bi kịch tài nguyên chung. Trong trường hợp này, vấn đề gần với việc thiếu đầu tư cho một hàng hóa công cộng và sự tập trung trách nhiệm bảo trì hơn là việc tiêu thụ quá mức một tài nguyên hữu hạn. Sự phân biệt này giúp tránh kết luận rằng bản chất mã nguồn mở tự gây ra mất an toàn.
+
+### 4. Cơ chế khắc phục và phòng ngừa
+
+Trước hết, doanh nghiệp và tổ chức sử dụng các thành phần mã nguồn mở quan trọng cần đóng góp ngược lại cho dự án. Sự hỗ trợ có thể là tài trợ dài hạn, trả lương cho người duy trì, cung cấp nhân lực kiểm thử hoặc hỗ trợ xử lý lỗ hổng. Nguồn lực ổn định giúp giảm áp lực lên cá nhân và tạo điều kiện xây dựng kế hoạch bảo trì lâu dài.
+
+Thứ hai, dự án cần phân chia trách nhiệm giữa nhiều người duy trì. Những thay đổi quan trọng, đặc biệt là thay đổi liên quan đến bảo mật và quá trình phát hành, nên được ít nhất một người khác xem xét độc lập. Quyền phát hành và quyền quản trị cần được kiểm soát, có nhật ký kiểm toán và quy trình thu hồi quyền khi phát sinh rủi ro. Người đóng góp mới cần được đánh giá dựa trên chất lượng công việc, nhưng không nên trao toàn bộ quyền quan trọng chỉ dựa trên thời gian tham gia hoặc sự tin tưởng cá nhân.
+
+Thứ ba, cần tăng cường bảo vệ chuỗi cung ứng phần mềm. Dự án có thể sử dụng kiểm thử tự động, phân tích mã tĩnh, kiểm tra phụ thuộc, ký số bản phát hành và xây dựng có thể tái lập. Các bản phát hành cần truy xuất được nguồn gốc, đồng thời quy trình xây dựng phải được kiểm tra để phát hiện khác biệt giữa mã nguồn công khai và sản phẩm phân phối. Kiểm thử tự động không thể phát hiện mọi cửa hậu, nhưng khi kết hợp với review độc lập và kiểm tra bản dựng, nó làm tăng cơ hội phát hiện thay đổi đáng ngờ.
+
+Cuối cùng, cộng đồng cần xây dựng cơ chế kế nhiệm và quy trình xử lý sự cố minh bạch. Dự án nên công khai hướng dẫn báo cáo lỗ hổng, duy trì danh sách người chịu trách nhiệm và chuẩn bị phương án phát hành bản sửa lỗi. Người dùng doanh nghiệp cũng nên lập danh mục thành phần phần mềm đang sử dụng để nhanh chóng xác định hệ thống bị ảnh hưởng khi có cảnh báo bảo mật.
+
+### 5. Kết luận
+
+Sự cố XZ Utils cho thấy phần mềm mã nguồn mở không chỉ cần mã nguồn công khai mà còn cần nguồn lực bảo trì, cơ chế quản trị và kiểm soát bảo mật phù hợp. Việc hàng triệu người cùng hưởng lợi từ phần mềm không có nghĩa một số ít tình nguyện viên có thể chịu trách nhiệm vô hạn. Để tránh bi kịch tài nguyên chung, cộng đồng và doanh nghiệp cần cùng đầu tư cho những dự án thiết yếu, phân chia quyền hạn hợp lý và tăng cường kiểm chứng bản phát hành. Bài học quan trọng nhất là tính minh bạch của mã nguồn chỉ phát huy hiệu quả khi đi kèm trách nhiệm, sự hợp tác và quy trình kiểm tra thực chất.
+
+### Tài liệu tham khảo
+
+1. Cox, R. (2024). *Timeline of the xz open source attack*.  
+   https://research.swtch.com/xz-timeline
+
+2. CERT-EU (2024). *Critical Vulnerability in XZ Utils — Security Advisory 2024-032*.  
+   https://www.cert.europa.eu/publications/security-advisories/2024-032/
+
+3. Struckman, K. (2024). *How to Secure Open Source Software: The Dilemma of the XZ Utils Backdoor*. Wilson Center.  
+   https://www.wilsoncenter.org/blog-post/how-secure-open-source-software-dilemma-xz-utils-backdoor
+
